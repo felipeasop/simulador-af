@@ -1,13 +1,13 @@
 # Simulador de Autômatos Finitos
 
-Simulador em Java para autômatos do tipo AFD, AFND e AFNDe, com entrada em formato JSON e testes de palavras em `.in`. A saída informa se a palavra foi aceita e o tempo de execução.
+Simulador em Java para autômatos finitos, são aceitos AFD, AFND e AFNDe, com entrada em formato JSON e testes de palavras em `.in`. A saída informa se a palavra foi aceita e o tempo de execução.
 
 ---
 
-## Funcionalidades (resumo por classe)
+## Funcionalidade das classes:
 
 * **`Transicao`**
-  Representa uma transição: origem, símbolo lido e destino.
+  Representa uma transição, contém origem, símbolo lido e próximo símbolo.
 
 * **`Automato`**
   Armazena os estados e transições, e identifica se o autômato é AFD, AFND ou AFNDe.
@@ -16,18 +16,18 @@ Simulador em Java para autômatos do tipo AFD, AFND e AFNDe, com entrada em form
   Implementa a lógica de simulação para cada tipo de autômato.
 
 * **`Leitor`**
-  Lê um arquivo `.aut` em JSON e constrói o objeto `Automato`.
+  Lê um arquivo de entrada com os dados do autômato `.aut` em Json utilizando Gson, inicializando o autômato.
 
 * **`SimuladorAF`**
-  Coordena a execução: lê os arquivos, identifica o tipo de autômato, executa os testes e gera a saída.
+  Contém a classe principal, recebe os inputs, realiza a chamada para outras classes, executa os testes e gera a saída.
 
 ---
 
 ## Requisitos
 
-* Java JDK 11 ou superior
-* Maven 3.6 ou superior
-* Biblioteca `gson` (já incluída no `pom.xml` se usar Maven)
+* Java JDK
+* Maven
+* Biblioteca `gson` (já está incluída no `pom.xml`)
 
 ---
 
@@ -68,10 +68,15 @@ Substitua `[caminhos/jars/gson-e-outros]` pelos caminhos corretos das biblioteca
 ```json
 {
   "initial": 0,
-  "final": [1, 3],
+  "final" : [4,7],
   "transitions": [
-    {"from": 0, "read": "a", "to": 1},
-    {"from": 1, "read": null, "to": 3}
+    {"from": 0, "read": "a", "to": 1 },
+    {"from": 0, "read": "a", "to": 3 },
+    {"from": 2, "read": "a", "to": 3 },
+    {"from": 3, "read": "b", "to": 2 },
+    {"from": 4, "read": "a", "to": 4 },
+    {"from": 7, "read": "c", "to": 1 },
+    {"from": 4, "read": null, "to": 0 }
   ]
 }
 ```
@@ -79,9 +84,10 @@ Substitua `[caminhos/jars/gson-e-outros]` pelos caminhos corretos das biblioteca
 ### Arquivo `.in` (teste de palavras)
 
 ```text
-a;1
-b;0
-ab;1
+aababababbbababa;1
+aababababbbababa;1
+aababababbbababa;1
+aababababbbababa;1
 ```
 
 ### Saída `.out`
@@ -95,9 +101,10 @@ palavra;esperado;obtido;tempo(s)
 Exemplo:
 
 ```text
-a;1;1;0.002
-b;0;0;0.001
-ab;1;0;0.003
+aababababbbababa;1;1007
+aababababbbababa;1;1;0.;0.013
+aababababbbababa;1;1;0.023
+aababababbbababa;1;1;0.150
 ```
 
 ---
