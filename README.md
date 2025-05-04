@@ -1,37 +1,48 @@
 # Simulador de Autômatos Finitos
 
-Simulador em Java para autômatos finitos, são aceitos AFD, AFND e AFNDe, com entrada em formato JSON e testes de palavras em `.in`. A saída informa se a palavra foi aceita e o tempo de execução.
+Simulador em Java para autômatos finitos. São aceitos **AFD**, **AFND** e **AFNDe**, com entrada em formato JSON e testes de palavras em arquivos `.in`. A saída informa se a palavra foi aceita e o tempo de execução.
 
 ---
 
-## Funcionalidade das classes:
+## Funcionalidade das Classes
 
-* **`Transicao`**
-  Representa uma transição, contém origem, símbolo lido e próximo símbolo.
+* **`Transicao`**  
+  Representa uma transição. Contém informações sobre a origem, o símbolo lido e o próximo estado.
 
-* **`Automato`**
-  Armazena os estados e transições, e identifica se o autômato é AFD, AFND ou AFNDe.
+* **`Automato`**  
+  Armazena os estados e transições do autômato, e identifica se ele é **AFD**, **AFND** ou **AFNDe**.
 
-* **`Executar`**
-  Implementa a lógica de simulação para cada tipo de autômato.
+* **`Executar`**  
+  Implementa a lógica de simulação para cada tipo de autômato, verificando se a palavra é aceita ou rejeitada.
 
-* **`Leitor`**
-  Lê um arquivo de entrada com os dados do autômato `.aut` em Json utilizando Gson, inicializando o autômato.
+* **`Leitor`**  
+  Lê um arquivo de entrada com os dados do autômato no formato JSON, utilizando a biblioteca **Gson**, e inicializa o autômato.
 
-* **`SimuladorAF`**
-  Contém a classe principal, recebe os inputs, realiza a chamada para outras classes, executa os testes e gera a saída.
+* **`SimuladorAF`**  
+  Contém a classe principal. Recebe os inputs, faz a chamada para outras classes, executa os testes e gera a saída.
 
 ---
 
 ## Requisitos
 
-* Java JDK
-* Maven
-* Biblioteca `gson` (já está incluída no `pom.xml`)
+* **Java JDK**
+* **Maven**
+* Biblioteca **Gson** (já incluída no `pom.xml`)
 
 ---
 
+## Instalação
+
+Clone o repositório com o seguinte comando:
+
+```bash
+git clone https://github.com/felipeasop/simulador-af.git
+cd simulador-af
+```
+
 ## Compilação
+
+Compile o projeto com Maven para gerar o JAR com as dependências:
 
 ```bash
 mvn clean install
@@ -41,23 +52,30 @@ mvn clean install
 
 ## Execução
 
-### Opção 1: Usando Maven
+### Execução por meio de Uber-JAR
+
+1. Prepare os arquivos de entrada
+
+Encontre a pasta que contém o arquivo shaded.jar
+
+Coloque no mesmo diretório do .jar (ou use caminhos absolutos):
+
+Um arquivo.aut com a definição do autômato no formato JSON (ex: entrada.aut)
+Um arquivo.in com as palavras de teste e os resultados esperados (ex: testes.in)
+
+2. Navegue até o diretório do JAR
 
 ```bash
-mvn exec:java \
-  -Dexec.mainClass="com.mycompany.simuladoraf.SimuladorAF" \
-  -Dexec.args="exemplo.aut exemplo.in"
+cd target
 ```
 
-### Opção 2: Linha de comando Java manual
+3. Execute o simulador
 
 ```bash
-java -cp "target/classes;[caminhos/jars/gson-e-outros]" \
-     com.mycompany.simuladoraf.SimuladorAF \
-     exemplo.aut exemplo.in
+java -jar exemplo-shaded.jar exemplo.aut exemplo.in
 ```
 
-Substitua `[caminhos/jars/gson-e-outros]` pelos caminhos corretos das bibliotecas necessárias (como gson).
+A saída será exibida no console e gravada em um arquivo .out, conforme implementação do programa
 
 ---
 
@@ -81,7 +99,7 @@ Substitua `[caminhos/jars/gson-e-outros]` pelos caminhos corretos das biblioteca
 }
 ```
 
-### Arquivo `.in` (teste de palavras)
+### Arquivo `.in` (CSV)
 
 ```text
 aababababbbababa;1
@@ -90,7 +108,7 @@ aababababbbababa;1
 aababababbbababa;1
 ```
 
-### Saída `.out`
+### Saída `.out` (CSV)
 
 Gerado automaticamente com uma linha por teste:
 
@@ -98,7 +116,7 @@ Gerado automaticamente com uma linha por teste:
 palavra;esperado;obtido;tempo(s)
 ```
 
-Exemplo:
+Exemplo de resultado esperado:
 
 ```text
 aababababbbababa;1;1007
