@@ -1,113 +1,113 @@
-# 🚩 Objetivo da Ferramenta
+# Simulador de Autômatos Finitos
 
-Este projeto tem como objetivo simular autômatos finitos (AFD, AFND e AFNDε) a partir de arquivos fornecidos pelo usuário. A ferramenta é implementada em Java e funciona totalmente via linha de comando.
-
-Ela recebe dois arquivos principais: um arquivo `.aut` contendo a descrição do autômato no formato JSON e um arquivo `.in` com palavras de teste e os resultados esperados. Após o processamento, ela gera um arquivo de saída com os resultados das simulações e o tempo de execução de cada uma.
+Este projeto implementa um simulador de autômatos finitos (AFD, AFND e AFNDe) em Java, usando o [Gson](https://github.com/google/gson) para carregar a definição do autômato a partir de um JSON e executar testes de cadeias de entrada.
 
 ---
 
-## ⚙️ Como Funciona
+## Funcionalidades
 
-A execução da ferramenta ocorre em três etapas principais:
-
-1. **Leitura do autômato**: O arquivo `.aut` é um JSON que define o estado inicial, os estados finais e uma lista de transições. Cada transição é um objeto com três campos: `from`, `read`, e `to`.
-
-2. **Leitura das entradas de teste**: O arquivo `.in` é um CSV em que cada linha contém uma palavra de entrada e o resultado esperado (1 para aceitação, 0 para rejeição).
-
-3. **Simulação e geração da saída**: Para cada palavra, a ferramenta simula o comportamento do autômato, determina se ela é aceita ou rejeitada, mede o tempo de execução e salva o resultado em um arquivo `.out`.
+- **Leitura de autômato** em JSON com campos:
+  - `initial`: estado inicial (inteiro)  
+  - `final`  : conjunto de estados finais (lista de inteiros)  
+  - `transitions`: lista de transições, cada qual com `from`, `read`, `to`  
+- **Detecção automática** do tipo de autômato:
+  - **AFD**  — determinístico  
+  - **AFND** — não‑determinístico  
+  - **AFNDe**— não‑determinístico com ε‑transições  
+- **Execução de testes**:
+  - Lê um arquivo `.in` onde cada linha é `palavra;esperado`  
+  - Para cada linha, imprime no console e escreve em arquivo `_saida.out`:  
+    ```
+    palavra;esperado;obtido;tempo(s)
+    ```
 
 ---
 
-## 📥 Formato dos Arquivos
+## 🚀 Pré‑requisitos
 
-### Arquivo `.aut`
+1. **Java JDK 11+**  
+   - Baixe em https://adoptium.net ou https://jdk.java.net  
+   - Instale e configure `JAVA_HOME` apontando para a pasta do JDK  
+   - Adicione `%JAVA_HOME%\bin` ao `PATH`
 
-Este arquivo contém a definição do autômato no formato JSON. Um exemplo de conteúdo seria:
+2. **Apache Maven 3.6+**  
+   - Baixe em https://maven.apache.org/download.cgi  
+   - Descompacte, configure `MAVEN_HOME` e adicione `%MAVEN_HOME%\bin` ao `PATH`  
+   - Teste com:
+     ```bash
+     mvn -v
+     ```
 
-{
-  "initial": 0,
-  "final": [4, 7],
-  "transitions": [
-    { "from": 0, "read": "a", "to": 1 },
-    { "from": 0, "read": "a", "to": 3 },
-    { "from": 2, "read": "a", "to": 3 },
-    { "from": 3, "read": "b", "to": 2 },
-    { "from": 4, "read": "a", "to": 4 },
-    { "from": 7, "read": "c", "to": 1 },
-    { "from": 4, "read": null, "to": 0 }
-  ]
-}
-O campo read pode ser null, indicando uma transição ε (vazia). Isso caracteriza um AFNDε.
+3. **Git** (opcional, para clonar o repositório)  
+   - Baixe em https://git-scm.com  
+   - Teste com:
+     ```bash
+     git --version
+     ```
 
-Arquivo .in
-Este arquivo deve conter as palavras a serem testadas, seguidas pelo valor esperado (1 ou 0), separados por ponto e vírgula:
+---
 
-Copiar
-Editar
-aababababbbababa;1
-ababa;1
-babab;0
-📤 Saída
-A ferramenta gera um novo arquivo de saída com o mesmo nome do arquivo de entrada, acrescido de _saida.out. Cada linha contém a palavra testada, o resultado esperado, o resultado obtido (1 ou 0) e o tempo de execução em segundos, separados por ponto e vírgula.
+## Instalação
 
-Exemplo de saída:
+1. **Clone o repositório**  
+   ```bash
+   git clone https://github.com/felipeasop/simulador-af.git
+   cd simulador-af
+Verifique a dependência do Gson no pom.xml
 
-Copiar
-Editar
-aababababbbababa;1;1;0.013
-ababa;1;1;0.004
-babab;0;0;0.006
-🧠 Detecção do Tipo de Autômato
-A ferramenta identifica automaticamente o tipo do autômato a partir das transições:
+<dependency>
+  <groupId>com.google.code.gson</groupId>
+  <artifactId>gson</artifactId>
+  <version>2.8.8</version>
+</dependency>
 
-Se houver alguma transição com leitura nula (read = null), o autômato é um AFNDε.
-
-Se houver múltiplas transições para o mesmo estado e símbolo, é um AFND.
-
-Caso contrário, é um AFD.
-
-🚀 Como Executar
-Requisitos
-Java 11 ou superior
-
-Maven
-
-Compilação
-Abra o terminal na raiz do projeto e execute:
+Build
+No diretório raiz do projeto (onde está o pom.xml), execute:
 
 mvn clean install
-Execução
-Você pode executar a ferramenta com o seguinte comando:
+clean: remove builds anteriores
 
-bash
-Copiar
-Editar
-mvn exec:java -Dexec.mainClass="com.mycompany.simuladoraf.SimuladorAF" -Dexec.args="automato.aut entrada.in"
-Certifique-se de substituir os nomes dos arquivos pelos caminhos corretos dos seus arquivos .aut e .in.
+install: compila, testa (se houver) e baixa dependências
 
-📁 Organização do Projeto
-O código-fonte da ferramenta está dentro da pasta src/main/java/com/mycompany/simuladoraf, contendo as classes responsáveis pela leitura dos arquivos, detecção do tipo de autômato e simulação.
+Se tudo ocorrer bem, suas classes compiladas ficarão em target/classes.
 
-📚 Exemplo Completo
-Suponha que você tenha o arquivo exemplo.aut com a seguinte definição:
+Uso
+1. Preparar arquivos de entrada
+Arquivo de autômato (.aut) ex. ex1.aut:
 
 {
   "initial": 0,
-  "final": [2],
+  "final": [4,7],
   "transitions": [
-    { "from": 0, "read": "a", "to": 1 },
-    { "from": 1, "read": "b", "to": 2 }
+    {"from": 0, "read": "a", "to": 1},
+    {"from": 0, "read": "a", "to": 3},
+    {"from": 2, "read": "a", "to": 3},
+    {"from": 3, "read": "b", "to": 2},
+    {"from": 4, "read": "a", "to": 4},
+    {"from": 7, "read": "c", "to": 1},
+    {"from": 4, "read": null, "to": 0}
   ]
 }
+Arquivo de testes (.in) ex. ex1_input.in:
 
-E o arquivo exemplo.in com:
-ab;1
-a;0
-abc;0
+aababababbbababa;1
+bbababa;0
+ababa;1
+cabab;0
+2. Executar via Maven
 
-Ao executar a ferramenta com: mvn exec:java -Dexec.mainClass="com.mycompany.simuladoraf.SimuladorAF" -Dexec.args="exemplo.aut exemplo.in"
-Será gerado o arquivo exemplo_saida.out com algo como:
+mvn exec:java \
+  -Dexec.mainClass="com.mycompany.simuladoraf.SimuladorAF" \
+  -Dexec.args="ex1.aut ex1_input.in"
+3. Ou executar diretamente com java
+No Windows, incluindo o JAR do Gson:
 
-ab;1;1;0.001
-a;0;0;0.002
-abc;0;0;0.001
+java -cp "target/classes;C:\Users\Felipe\.m2\repository\com\google\code\gson\gson\2.8.8\gson-2.8.8.jar" ^
+  com.mycompany.simuladoraf.SimuladorAF ex1.aut ex1_input.in
+Ajuste o caminho do JAR conforme sua instalação.
+
+4. Saída
+Console: cada linha no formato
+
+palavra;esperado;obtido;tempo(s)
+Arquivo: ex1_input_saida.out gerado ao lado de ex1_input.in com as mesmas linhas.
