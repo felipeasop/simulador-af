@@ -1,65 +1,37 @@
 # Simulador de Autômatos Finitos
 
-Este projeto implementa um simulador de autômatos finitos (AFD, AFND e AFNDe) em Java, usando a biblioteca [Gson](https://github.com/google/gson) para carregar a definição do autômato a partir de um JSON e executar testes com cadeias de entrada.
+Simulador em Java para autômatos do tipo AFD, AFND e AFNDe, com entrada em formato JSON e testes de palavras em `.in`. A saída informa se a palavra foi aceita e o tempo de execução.
 
 ---
 
-## Funcionalidades
+## Funcionalidades (resumo por classe)
 
-- Leitura de autômato em JSON com os campos:
-  - `initial`: estado inicial (inteiro)
-  - `final`: conjunto de estados finais (lista de inteiros)
-  - `transitions`: lista de transições com `from`, `read`, `to`
-- Detecção automática do tipo de autômato:
-  - AFD — determinístico  
-  - AFND — não determinístico  
-  - AFNDe — não determinístico com transições ε
-- Execução de testes:
-  - Lê um arquivo `.in` onde cada linha é `palavra;esperado`  
-  - Gera saída no console e em arquivo `.out` no formato:
+* **`Transicao`**
+  Representa uma transição: origem, símbolo lido e destino.
 
-```text
-palavra;esperado;obtido;tempo(s)
-```
+* **`Automato`**
+  Armazena os estados e transições, e identifica se o autômato é AFD, AFND ou AFNDe.
+
+* **`Executar`**
+  Implementa a lógica de simulação para cada tipo de autômato.
+
+* **`Leitor`**
+  Lê um arquivo `.aut` em JSON e constrói o objeto `Automato`.
+
+* **`SimuladorAF`**
+  Coordena a execução: lê os arquivos, identifica o tipo de autômato, executa os testes e gera a saída.
 
 ---
 
 ## Requisitos
 
-- Java JDK 11 ou superior  
-- Apache Maven 3.6 ou superior  
-- Git (opcional, para clonar o repositório)
-
-Verifique as instalações com:
-
-```bash
-java -version
-mvn -v
-git --version
-```
+* Java JDK 11 ou superior
+* Maven 3.6 ou superior
+* Biblioteca `gson` (já incluída no `pom.xml` se usar Maven)
 
 ---
 
-## Instalação
-
-Clone o repositório:
-
-```bash
-git clone https://github.com/usuario/simulador-af.git
-cd simulador-af
-```
-
-O `pom.xml` já inclui a dependência do Gson:
-
-```xml
-<dependency>
-  <groupId>com.google.code.gson</groupId>
-  <artifactId>gson</artifactId>
-  <version>2.8.8</version>
-</dependency>
-```
-
-Para compilar:
+## Compilação
 
 ```bash
 mvn clean install
@@ -67,64 +39,65 @@ mvn clean install
 
 ---
 
-## Uso
+## Execução
 
-### 1. Arquivos de entrada
-
-**Autômato (.aut):**
-
-```json
-{
-  "initial": 0,
-  "final": [4,7],
-  "transitions": [
-    {"from": 0, "read": "a", "to": 1},
-    {"from": 0, "read": "a", "to": 3},
-    {"from": 2, "read": "a", "to": 3},
-    {"from": 3, "read": "b", "to": 2},
-    {"from": 4, "read": "a", "to": 4},
-    {"from": 7, "read": "c", "to": 1},
-    {"from": 4, "read": null, "to": 0}
-  ]
-}
-```
-
-**Testes (.in):**
-
-```text
-aababababbbababa;1
-bbababa;0
-ababa;1
-cabab;0
-```
-
----
-
-### 2. Executar com Maven
+### Opção 1: Usando Maven
 
 ```bash
 mvn exec:java \
   -Dexec.mainClass="com.mycompany.simuladoraf.SimuladorAF" \
-  -Dexec.args="ex1.aut ex1_input.in"
+  -Dexec.args="exemplo.aut exemplo.in"
 ```
+
+### Opção 2: Linha de comando Java manual
+
+```bash
+java -cp "target/classes;[caminhos/jars/gson-e-outros]" \
+     com.mycompany.simuladoraf.SimuladorAF \
+     exemplo.aut exemplo.in
+```
+
+Substitua `[caminhos/jars/gson-e-outros]` pelos caminhos corretos das bibliotecas necessárias (como gson).
 
 ---
 
-### 3. Executar diretamente com Java
+## Formato dos Arquivos
 
-```bat
-java -cp "target/classes;C:\Users\SeuUsuario\.m2\repository\com\google\code\gson\gson\2.8.8\gson-2.8.8.jar" ^
-  com.mycompany.simuladoraf.SimuladorAF ex1.aut ex1_input.in
+### Arquivo `.aut` (JSON)
+
+```json
+{
+  "initial": 0,
+  "final": [1, 3],
+  "transitions": [
+    {"from": 0, "read": "a", "to": 1},
+    {"from": 1, "read": null, "to": 3}
+  ]
+}
 ```
 
-Ajuste o caminho do JAR conforme necessário.
+### Arquivo `.in` (teste de palavras)
 
----
+```text
+a;1
+b;0
+ab;1
+```
 
-### 4. Saída
+### Saída `.out`
 
-Console e arquivo `.out` com as linhas:
+Gerado automaticamente com uma linha por teste:
 
 ```text
 palavra;esperado;obtido;tempo(s)
 ```
+
+Exemplo:
+
+```text
+a;1;1;0.002
+b;0;0;0.001
+ab;1;0;0.003
+```
+
+---
