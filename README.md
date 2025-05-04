@@ -1,91 +1,34 @@
 # Simulador de Autômatos Finitos
 
-Este projeto implementa um simulador de autômatos finitos (AFD, AFND e AFNDe) em Java, usando o [Gson](https://github.com/google/gson) para carregar a definição do autômato a partir de um JSON e executar testes de cadeias de entrada.
+Ferramenta em Java para simular **Autômatos Finitos Determinísticos (AFD)**, **Autômatos Finitos Não Determinísticos (AFND)** e **Autômatos Finitos com ε-transições (AFNDe)**. A ferramenta lê a definição do autômato a partir de um arquivo JSON, testa múltiplas cadeias de entrada e gera um relatório com o resultado de aceitação e o tempo de execução.
 
 ---
 
-## 📋 Funcionalidades
+## Funcionalidades
 
-- **Leitura de autômato** em JSON com campos:
-  - `initial`: estado inicial (inteiro)  
-  - `final`  : conjunto de estados finais (lista de inteiros)  
-  - `transitions`: lista de transições, cada qual com `from`, `read`, `to`  
-- **Detecção automática** do tipo de autômato:
-  - **AFD**  — determinístico  
-  - **AFND** — não‑determinístico  
-  - **AFNDe**— não‑determinístico com ε‑transições  
-- **Execução de testes**:
-  - Lê um arquivo `.in` onde cada linha é `palavra;esperado`  
-  - Para cada linha, imprime no console e escreve em arquivo `_saida.out`:  
-    ```
-    palavra;esperado;obtido;tempo(s)
-    ```
+- **Simulação de Autômatos Finitos**: Suporte para AFD, AFND e AFNDe.
+- **Entrada de Dados**: Aceita um arquivo JSON com a definição do autômato e um arquivo CSV com as cadeias de entrada para teste.
+- **Relatório de Saída**: Gera um relatório com os resultados da aceitação das cadeias, o tempo de execução de cada teste e comparação com o resultado esperado.
 
 ---
 
-## 🚀 Pré‑requisitos
+## Exemplo de Funcionamento
 
-1. **Java JDK 11+**  
-   - Baixe em https://adoptium.net ou https://jdk.java.net  
-   - Instale e configure `JAVA_HOME` apontando para a pasta do JDK  
-   - Adicione `%JAVA_HOME%\bin` ao `PATH`
+A ferramenta funciona a partir de **dois arquivos**:
 
-2. **Apache Maven 3.6+**  
-   - Baixe em https://maven.apache.org/download.cgi  
-   - Descompacte, configure `MAVEN_HOME` e adicione `%MAVEN_HOME%\bin` ao `PATH`  
-   - Teste com:
-     ```bash
-     mvn -v
-     ```
-
-3. **Git** (opcional, para clonar o repositório)  
-   - Baixe em https://git-scm.com  
-   - Teste com:
-     ```bash
-     git --version
-     ```
+1. **Especificação do autômato** (arquivo `arquivo_do_automato.aut` em JSON)
+2. **Entradas para teste** (arquivo `arquivo_de_testes.in` em CSV com o delimitador `;`)
 
 ---
 
-## ⚙️ Instalação
+### 1. Especificação da Máquina de Estados
 
-1. **Clone o repositório**  
-   ```bash
-   git clone https://github.com/felipeasop/simulador-af.git
-   cd simulador-af
-Verifique a dependência do Gson no pom.xml
+**Formato do arquivo JSON** para definir o autômato (`arquivo_do_automato.aut`):
 
-xml
-Copiar
-Editar
-<dependency>
-  <groupId>com.google.code.gson</groupId>
-  <artifactId>gson</artifactId>
-  <version>2.8.8</version>
-</dependency>
-🔨 Build
-No diretório raiz do projeto (onde está o pom.xml), execute:
-
-bash
-Copiar
-Editar
-mvn clean install
-clean: remove builds anteriores
-
-install: compila, testa (se houver) e baixa dependências
-
-Se tudo ocorrer bem, suas classes compiladas ficarão em target/classes.
-
-▶️ Uso
-1. Preparar arquivos de entrada
-Arquivo de autômato (.aut) ex. ex1.aut:
-
-json
-Copiar
-Editar
+```json
 {
   "initial": 0,
-  "final": [4,7],
+  "final" : [4,7],
   "transitions": [
     {"from": 0, "read": "a", "to": 1},
     {"from": 0, "read": "a", "to": 3},
@@ -96,36 +39,93 @@ Editar
     {"from": 4, "read": null, "to": 0}
   ]
 }
-Arquivo de testes (.in) ex. ex1_input.in:
+initial: Estado inicial.
 
+final: Lista de estados finais.
+
+transitions: Lista de objetos que definem as transições, com os campos:
+
+from: Estado de origem.
+
+read: Símbolo lido (pode ser null para transições ε).
+
+to: Estado de destino.
+
+2. Entradas para Teste
+Formato do arquivo CSV para definir as cadeias a serem testadas (arquivo_de_testes.in):
+
+csv
 Copiar
 Editar
+palavra_de_entrada;resultadoEsperado
 aababababbbababa;1
 bbababa;0
 ababa;1
 cabab;0
-2. Executar via Maven
+Cada linha contém:
+
+palavra_de_entrada: Cadeia a ser testada no autômato.
+
+resultadoEsperado: Resultado esperado (1 para aceitação, 0 para rejeição).
+
+Execução
+Compilação
+Para compilar o projeto, execute o comando:
+
+bash
+Copiar
+Editar
+mvn clean install
+Execução do Simulador
+Execute o simulador com o seguinte comando genérico:
+
+bash
+Copiar
+Editar
+java -cp "target/classes:PATH_TO_GSON_JAR" \
+  com.mycompany.simuladoraf.SimuladorAF \
+  arquivo_do_automato.aut arquivo_de_testes.in
+Observação: Substitua PATH_TO_GSON_JAR pelo caminho para o JAR do Gson (por exemplo, ~/.m2/repository/com/google/code/gson/gson/2.8.8/gson-2.8.8.jar).
+
+Ou, você pode executar via Maven:
+
 bash
 Copiar
 Editar
 mvn exec:java \
   -Dexec.mainClass="com.mycompany.simuladoraf.SimuladorAF" \
-  -Dexec.args="ex1.aut ex1_input.in"
-3. Ou executar diretamente com java
-No Windows, incluindo o JAR do Gson:
+  -Dexec.args="arquivo_do_automato.aut arquivo_de_testes.in"
+Saída
+Após a execução, o programa gera o arquivo arquivo_de_testes_saida.out, que contém os resultados de cada cadeia de entrada testada.
 
-bat
+Formato do arquivo de saída (arquivo_de_testes_saida.out):
+
+csv
 Copiar
 Editar
-java -cp "target/classes;C:\Users\Felipe\.m2\repository\com\google\code\gson\gson\2.8.8\gson-2.8.8.jar" ^
-  com.mycompany.simuladoraf.SimuladorAF ex1.aut ex1_input.in
-Ajuste o caminho do JAR conforme sua instalação.
+palavra_de_entrada;resultadoEsperado;resultadoObtido;tempoEmSegundos
+aababababbbababa;1;1;0.013
+bbababa;0;0;0.005
+ababa;1;1;0.002
+cabab;0;0;0.004
+palavra_de_entrada: Cadeia testada.
 
-4. Saída
-Console: cada linha no formato
+resultadoEsperado: O resultado esperado (1 ou 0).
 
-scss
+resultadoObtido: O resultado retornado pela simulação (1 ou 0).
+
+tempoEmSegundos: Tempo gasto para processar a cadeia de entrada.
+
+Dependências
+Gson: Biblioteca necessária para manipulação de JSON. Você pode baixar o JAR do Gson em https://mvnrepository.com/artifact/com.google.code.gson/gson.
+
+Adicione a dependência do Gson no pom.xml:
+
+xml
 Copiar
 Editar
-palavra;esperado;obtido;tempo(s)
-Arquivo: ex1_input_saida.out gerado ao lado de ex1_input.in com as mesmas linhas
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>2.8.8</version>
+</dependency>
