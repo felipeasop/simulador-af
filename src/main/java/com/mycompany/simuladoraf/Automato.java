@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 public class Automato {
-
     @SerializedName("initial")
     private int estadoInicial;
 
@@ -35,11 +34,13 @@ public class Automato {
                 return "AFNDe";
             }
         }
-        for (Transicao t1 : transicoes) {
-            for (Transicao t2 : transicoes) {
-                if (t1.getEstadoAtual() == t2.getEstadoAtual()
-                        && t1.getSimbolo().equals(t2.getSimbolo())
-                        && !t1.equals(t2)) {
+        for (int i = 0; i < transicoes.size(); i++) {
+            Transicao t1 = transicoes.get(i);
+            for (int j = i + 1; j < transicoes.size(); j++) {
+                Transicao t2 = transicoes.get(j);
+                if (t1.getEstadoAtual() == t2.getEstadoAtual() 
+                    && t1.getSimbolo().equals(t2.getSimbolo()) 
+                    && t1.getProximoEstado() != t2.getProximoEstado()) {
                     return "AFND";
                 }
             }
