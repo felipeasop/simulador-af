@@ -78,7 +78,7 @@ A execução é feita por meio de um Uber-JAR (JAR com todas as dependências in
 
    A saída será exibida no console e gravada em um arquivo `.out`, conforme a implementação do programa.
 
----;
+---
 
 ## Formato dos Arquivos
 
